@@ -1,17 +1,15 @@
 package validation
 
 import (
-	"context"
-	"errors"
-
 	"github.com/go-playground/validator/v10"
 )
 
-var _ Validater = (*Validator)(nil)
+// INFO: Copy from usecases
+type Validater interface {
+	IsValidUuid(target string) bool
+}
 
-var (
-	ErrNotValidUuid = errors.New("Not valid uuid")
-)
+var _ Validater = (*Validator)(nil)
 
 type Validator struct {
 	*validator.Validate
@@ -27,12 +25,12 @@ type uuid struct {
 	Value string `validate:"uuid"`
 }
 
-func (v *Validator) ValidateUuid(ctx context.Context, target string) error {
+func (v *Validator) IsValidUuid(target string) bool {
 	uuid := uuid{target}
 
-	if err := v.StructCtx(ctx, uuid); err != nil {
-		return ErrNotValidUuid
+	if err := v.Struct(uuid); err != nil {
+		return false
 	}
 
-	return nil
+	return true
 }

@@ -14,9 +14,8 @@ type ArtistUsecase struct {
 }
 
 func (u *ArtistUsecase) Get(ctx context.Context, id entities.ArtistId) (entities.Artist, error) {
-	err := u.Validator.ValidateUuid(ctx, id.String())
-	if err != nil {
-		return entities.Artist{}, err
+	if ok := u.Validator.IsValidUuid(id.Get()); !ok {
+		return entities.Artist{}, ErrNotValidUuid
 	}
 
 	artist, err := u.ArtistRepo.Get(ctx, id)
@@ -46,11 +45,8 @@ func (u *ArtistUsecase) Create(ctx context.Context, artist entities.Artist) (ent
 }
 
 func (u *ArtistUsecase) Replace(ctx context.Context, artist entities.Artist) error {
-	id := artist.GetID()
-
-	err := u.Validator.ValidateUuid(ctx, id)
-	if err != nil {
-		return err
+	if ok := u.Validator.IsValidUuid(artist.GetId()); !ok {
+		return ErrNotValidUuid
 	}
 
 	if err := u.ArtistRepo.Replace(ctx, artist); err != nil {
@@ -61,9 +57,8 @@ func (u *ArtistUsecase) Replace(ctx context.Context, artist entities.Artist) err
 }
 
 func (u *ArtistUsecase) Delete(ctx context.Context, id entities.ArtistId) error {
-	err := u.Validator.ValidateUuid(ctx, id.String())
-	if err != nil {
-		return err
+	if ok := u.Validator.IsValidUuid(id.Get()); !ok {
+		return ErrNotValidUuid
 	}
 
 	if err := u.ArtistRepo.Delete(ctx, id); err != nil {

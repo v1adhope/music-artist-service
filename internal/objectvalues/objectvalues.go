@@ -23,6 +23,10 @@ var (
 
 type ArtistStatus string
 
+func (ov ArtistStatus) String() string {
+	return string(ov)
+}
+
 func ParseArtistStatus(mounthlyListeners uint64) ArtistStatus {
 	status := ArtistStatus(StatusBronse)
 
@@ -40,6 +44,10 @@ func ParseArtistStatus(mounthlyListeners uint64) ArtistStatus {
 
 type Email string
 
+func (ov Email) String() string {
+	return string(ov)
+}
+
 func ParseEmail(target string) (Email, error) {
 	_, err := mail.ParseAddress(target)
 	if err != nil {
@@ -50,6 +58,10 @@ func ParseEmail(target string) (Email, error) {
 }
 
 type Website string
+
+func (ov Website) String() string {
+	return string(ov)
+}
 
 func ParseWebsite(target string) (Website, error) {
 	url, err := url.ParseRequestURI(target)
@@ -65,6 +77,10 @@ func ParseWebsite(target string) (Website, error) {
 }
 
 type ArtistName string
+
+func (ov ArtistName) String() string {
+	return string(ov)
+}
 
 func ParseArtistName(target string) (ArtistName, error) {
 	if len(target) > 255 {
@@ -83,6 +99,10 @@ func ParseArtistName(target string) (ArtistName, error) {
 }
 
 type ArtistDescription string
+
+func (ov ArtistDescription) String() string {
+	return string(ov)
+}
 
 func ParseArtistDescription(target string) (ArtistDescription, error) {
 	if len(target) > 255 {

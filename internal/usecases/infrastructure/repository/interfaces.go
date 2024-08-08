@@ -6,6 +6,7 @@ import (
 	"github.com/v1adhope/music-artist-service/internal/entities"
 )
 
+// INFO: copy of usecases
 type ArtistReposer interface {
 	Get(ctx context.Context, id entities.ArtistId) (entities.Artist, error)
 	GetAll(ctx context.Context) ([]entities.Artist, error)

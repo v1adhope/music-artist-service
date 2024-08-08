@@ -15,51 +15,99 @@ type Artist struct {
 	status            objectvalues.ArtistStatus
 }
 
-func ParseArtist(name, description, website, email string, mounthlyListeners uint64) (Artist, error) {
-	validName, err := objectvalues.ParseArtistName(name)
-	if err != nil {
-		return Artist{}, err
-	}
-
-	validDesc, err := objectvalues.ParseArtistDescription(description)
-	if err != nil {
-		return Artist{}, err
-	}
-
-	validWebsite, err := objectvalues.ParseWebsite(website)
-	if err != nil {
-		return Artist{}, err
-	}
-
-	validEmail, err := objectvalues.ParseEmail(email)
-	if err != nil {
-		return Artist{}, err
-	}
-
-	status := objectvalues.ParseArtistStatus(mounthlyListeners)
-
-	return Artist{
-		name:              validName,
-		description:       validDesc,
-		website:           validWebsite,
-		mounthlyListeners: mounthlyListeners,
-		email:             validEmail,
-		status:            status,
-	}, nil
+// INFO: validate depends of service
+func (e *Artist) SetId(target string) {
+	e.id = target
 }
 
-func (e *Artist) SetID(id string) {
-	e.id = id
+func (e *Artist) SetName(target string) error {
+	var err error
+
+	e.name, err = objectvalues.ParseArtistName(target)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (e *Artist) GetID() string {
+func (e *Artist) SetDescription(target string) error {
+	var err error
+
+	e.description, err = objectvalues.ParseArtistDescription(target)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *Artist) SetWebsite(target string) error {
+	var err error
+
+	e.website, err = objectvalues.ParseWebsite(target)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *Artist) SetMounthlyListeners(target uint64) {
+	e.mounthlyListeners = target
+}
+
+func (e *Artist) SetEmaiil(target string) error {
+	var err error
+
+	e.email, err = objectvalues.ParseEmail(target)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (e *Artist) SetStatus(mounthlyListeners uint64) {
+	e.status = objectvalues.ParseArtistStatus(mounthlyListeners)
+}
+
+func (e *Artist) GetId() string {
 	return e.id
+}
+
+func (e *Artist) GetName() objectvalues.ArtistName {
+	return e.name
+}
+
+func (e *Artist) GetDescription() objectvalues.ArtistDescription {
+	return e.description
+}
+func (e *Artist) GetWebsite() objectvalues.Website {
+	return e.website
+}
+
+func (e *Artist) GetMounthlyListeners() uint64 {
+	return e.mounthlyListeners
+}
+
+func (e *Artist) GetEmail() objectvalues.Email {
+	return e.email
+}
+
+func (e *Artist) GetStatus() objectvalues.ArtistStatus {
+	return e.status
 }
 
 type ArtistId struct {
 	value string
 }
 
-func (e *ArtistId) String() string {
+// INFO: validate depends of service
+func (e *ArtistId) Set(id string) {
+	e.value = id
+}
+
+func (e *ArtistId) Get() string {
 	return e.value
 }

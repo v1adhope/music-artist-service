@@ -1,7 +1,6 @@
 package validation_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,9 +30,9 @@ func TestValidateUuidPositive(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run("", func(t *testing.T) {
-			err := validator.ValidateUuid(context.Background(), tc.input)
+			ok := validator.IsValidUuid(tc.input)
 
-			assert.NoError(t, err, tc.key)
+			assert.True(t, ok, tc.key)
 		})
 	}
 }
@@ -57,9 +56,9 @@ func TestValidateUuidNegative(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run("", func(t *testing.T) {
-			err := validate.ValidateUuid(context.Background(), tc.input)
+			ok := validate.IsValidUuid(tc.input)
 
-			assert.ErrorIs(t, err, validation.ErrNotValidUuid, tc.key)
+			assert.False(t, ok, tc.key)
 		})
 	}
 }

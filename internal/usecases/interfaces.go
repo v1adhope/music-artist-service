@@ -16,7 +16,7 @@ type ArtistUsecaser interface {
 }
 
 type Validater interface {
-	ValidateUuid(ctx context.Context, target string) error
+	IsValidUuid(target string) bool
 }
 
 type ArtistReposer interface {
