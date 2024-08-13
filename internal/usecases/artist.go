@@ -13,6 +13,13 @@ type ArtistUsecase struct {
 	Validator  Validater
 }
 
+func NewArtist(ar ArtistReposer, v Validater) *ArtistUsecase {
+	return &ArtistUsecase{
+		ArtistRepo: ar,
+		Validator:  v,
+	}
+}
+
 func (u *ArtistUsecase) Get(ctx context.Context, id entities.ArtistId) (entities.Artist, error) {
 	if ok := u.Validator.IsValidUuid(id.Get()); !ok {
 		return entities.Artist{}, ErrNotValidUuid
