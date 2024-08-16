@@ -13,6 +13,7 @@ There's nothing about clean architecture. For example why you shouldn't use gett
 - [ ] Cache
 - [ ] Representation
 - [ ] Taskfile for `grpcurl`
+- [ ] Build cluster with helm
 
 # Tree
 
