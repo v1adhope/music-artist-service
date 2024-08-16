@@ -1,9 +1,9 @@
-package repository
+package repositories
 
 import "github.com/v1adhope/music-artist-service/pkg/postgresql"
 
 type Repos struct {
-	Artist *ArtistRepo
+	Artist ArtistReposer
 }
 
 func New(d *postgresql.Postgres) *Repos {

@@ -6,7 +6,6 @@ import (
 	"github.com/v1adhope/music-artist-service/internal/entities"
 )
 
-// INFO: GetAll might include representation
 type ArtistUsecaser interface {
 	Get(ctx context.Context, id entities.ArtistId) (entities.Artist, error)
 	GetAll(ctx context.Context) ([]entities.Artist, error)

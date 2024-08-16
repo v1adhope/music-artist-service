@@ -1,9 +1,8 @@
-// INFO: how to avoid empty values (default)
-// INFO: how to handle errors after seters
-package repository
+package repositories
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/Masterminds/squirrel"
@@ -18,15 +17,6 @@ type ArtistRepo struct {
 
 func NewArtist(d *postgresql.Postgres) *ArtistRepo {
 	return &ArtistRepo{d}
-}
-
-type artistDto struct {
-	name              string
-	description       string
-	website           string
-	mounthlyListeners uint64
-	email             string
-	status            string
 }
 
 func (r *ArtistRepo) Get(ctx context.Context, id entities.ArtistId) (entities.Artist, error) {
@@ -46,7 +36,19 @@ func (r *ArtistRepo) Get(ctx context.Context, id entities.ArtistId) (entities.Ar
 
 	dto := artistDto{}
 
-	if err := r.Pool.QueryRow(ctx, sql, args...).Scan(&dto.name, &dto.description, &dto.website, &dto.mounthlyListeners, &dto.email); err != nil {
+	if err := r.Pool.QueryRow(ctx, sql, args...).
+		Scan(
+			&dto.name,
+			&dto.description,
+			&dto.website,
+			&dto.mounthlyListeners,
+			&dto.email,
+		); err != nil {
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			return entities.Artist{}, entities.ErrNoContent
+		}
+
 		return entities.Artist{}, fmt.Errorf("repository: artist: get: can't map data: %w", err)
 	}
 
@@ -55,7 +57,7 @@ func (r *ArtistRepo) Get(ctx context.Context, id entities.ArtistId) (entities.Ar
 	artist.SetDescription(dto.description)
 	artist.SetWebsite(dto.website)
 	artist.SetMounthlyListeners(dto.mounthlyListeners)
-	artist.SetEmaiil(dto.email)
+	artist.SetEmail(dto.email)
 	artist.SetStatus(dto.mounthlyListeners)
 
 	return artist, nil
@@ -63,6 +65,7 @@ func (r *ArtistRepo) Get(ctx context.Context, id entities.ArtistId) (entities.Ar
 
 func (r *ArtistRepo) GetAll(ctx context.Context) ([]entities.Artist, error) {
 	sql, args, err := r.Builder.Select(
+		"artist_id",
 		"name",
 		"description",
 		"website",
@@ -82,13 +85,23 @@ func (r *ArtistRepo) GetAll(ctx context.Context) ([]entities.Artist, error) {
 		return nil, fmt.Errorf("repository: artist: getAll: can't fetch data: %w", err)
 	}
 
-	_, err = pgx.ForEachRow(rows, []any{&dto.name, &dto.description, &dto.website, &dto.mounthlyListeners, &dto.email}, func() error {
+	scans := []any{
+		&dto.id,
+		&dto.name,
+		&dto.description,
+		&dto.website,
+		&dto.mounthlyListeners,
+		&dto.email,
+	}
+
+	tag, err := pgx.ForEachRow(rows, scans, func() error {
 		artist := entities.Artist{}
+		artist.SetId(dto.id)
 		artist.SetName(dto.name)
 		artist.SetDescription(dto.description)
 		artist.SetWebsite(dto.website)
 		artist.SetMounthlyListeners(dto.mounthlyListeners)
-		artist.SetEmaiil(dto.email)
+		artist.SetEmail(dto.email)
 		artist.SetStatus(dto.mounthlyListeners)
 
 		artists = append(artists, artist)
@@ -99,11 +112,11 @@ func (r *ArtistRepo) GetAll(ctx context.Context) ([]entities.Artist, error) {
 		return nil, fmt.Errorf("repository: artist: getAll: can't map data: %w", err)
 	}
 
-	return artists, nil
-}
+	if tag.RowsAffected() == 0 {
+		return nil, entities.ErrNoContent
+	}
 
-type artisctCreateDto struct {
-	id string
+	return artists, nil
 }
 
 func (r *ArtistRepo) Create(ctx context.Context, artist entities.Artist) (entities.ArtistId, error) {
@@ -126,9 +139,10 @@ func (r *ArtistRepo) Create(ctx context.Context, artist entities.Artist) (entiti
 		return entities.ArtistId{}, fmt.Errorf("repository: artist: create: can't build query: %w", err)
 	}
 
-	dto := artisctCreateDto{}
+	dto := artistIdDto{}
 
-	if err := r.Pool.QueryRow(ctx, sql, args...).Scan(&dto.id); err != nil {
+	if err := r.Pool.QueryRow(ctx, sql, args...).
+		Scan(&dto.id); err != nil {
 		return entities.ArtistId{}, fmt.Errorf("repository: artist: create: can't map: %w", err)
 	}
 
@@ -147,9 +161,13 @@ func (r *ArtistRepo) Delete(ctx context.Context, id entities.ArtistId) error {
 		return fmt.Errorf("repository: artist: delete: can't build query: %w", err)
 	}
 
-	_, err = r.Pool.Exec(ctx, sql, args...)
+	tag, err := r.Pool.Exec(ctx, sql, args...)
 	if err != nil {
 		return fmt.Errorf("repository: artist: delete: can't exec query: %w", err)
+	}
+
+	if tag.RowsAffected() == 0 {
+		return entities.ErrNoContent
 	}
 
 	return nil
@@ -157,7 +175,7 @@ func (r *ArtistRepo) Delete(ctx context.Context, id entities.ArtistId) error {
 
 func (r *ArtistRepo) Replace(ctx context.Context, artist entities.Artist) error {
 	valuesByColumns := squirrel.Eq{
-		"name":               artist.GetEmail().String(),
+		"name":               artist.GetName().String(),
 		"description":        artist.GetDescription().String(),
 		"website":            artist.GetWebsite().String(),
 		"mounthly_listeners": artist.GetMounthlyListeners(),
@@ -174,9 +192,13 @@ func (r *ArtistRepo) Replace(ctx context.Context, artist entities.Artist) error 
 		return fmt.Errorf("repository: artist: replace: can't build query: %w", err)
 	}
 
-	_, err = r.Pool.Exec(ctx, sql, args...)
+	tag, err := r.Pool.Exec(ctx, sql, args...)
 	if err != nil {
 		return fmt.Errorf("repository: artist: replace: can't exec query: %w", err)
+	}
+
+	if tag.RowsAffected() == 0 {
+		return entities.ErrNoContent
 	}
 
 	return nil

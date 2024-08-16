@@ -83,7 +83,7 @@ func (ov ArtistName) String() string {
 }
 
 func ParseArtistName(target string) (ArtistName, error) {
-	if len(target) > 255 {
+	if len(target) > 255 || len(target) < 0 {
 		return "", ErrNotValidArtistName
 	}
 
@@ -105,7 +105,7 @@ func (ov ArtistDescription) String() string {
 }
 
 func ParseArtistDescription(target string) (ArtistDescription, error) {
-	if len(target) > 255 {
+	if len(target) > 255 || len(target) < 12 {
 		return "", ErrNotValidArtistDescription
 	}
 

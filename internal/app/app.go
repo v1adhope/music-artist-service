@@ -2,22 +2,43 @@ package app
 
 import (
 	"context"
-	"log"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/v1adhope/music-artist-service/internal/config"
+	v1 "github.com/v1adhope/music-artist-service/internal/controllers/grpc/v1"
+	"github.com/v1adhope/music-artist-service/internal/usecases"
+	"github.com/v1adhope/music-artist-service/internal/usecases/infrastructure/repositories"
+	"github.com/v1adhope/music-artist-service/internal/usecases/infrastructure/validation"
+	"github.com/v1adhope/music-artist-service/pkg/logger"
+	"github.com/v1adhope/music-artist-service/pkg/postgresql"
 )
 
-// TODO: DI container
-func Run(ctx context.Context) error {
-	cfg, err := config.Build(ctx)
+func Run(ctx context.Context, cfg config.Config, logger logger.Logger) error {
+	pg, err := postgresql.Build(ctx, cfg.Postgres)
 	if err != nil {
 		return err
 	}
 
-	log.Println(cfg)
+	repos := repositories.New(pg)
 
-	time.Sleep(1 * time.Hour)
+	validator := validation.New()
+
+	uc := usecases.New(repos, validator)
+
+	s, err := v1.Build(cfg.GrpcServer, uc, logger)
+	if err != nil {
+		return err
+	}
+
+	go s.Run()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+	<-c
+
+	s.Shutdown()
 
 	return nil
 }

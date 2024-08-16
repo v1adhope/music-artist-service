@@ -75,22 +75,16 @@ func TestParseEmailPositive(t *testing.T) {
 
 func TestParseEmailNegative(t *testing.T) {
 	tcs := []struct {
-		key         string
-		input       string
-		expected    objectvalues.Email
-		expectedErr error
+		key   string
+		input string
 	}{
 		{
-			key:         "Case 1",
-			input:       "spam-eggs.com",
-			expected:    "",
-			expectedErr: objectvalues.ErrNotValidEmail,
+			key:   "Case 1",
+			input: "spam-eggs.com",
 		},
 		{
-			key:         "Case 2",
-			input:       "imaginedragonsgmail.com",
-			expected:    "",
-			expectedErr: objectvalues.ErrNotValidEmail,
+			key:   "Case 2",
+			input: "imaginedragonsgmail.com",
 		},
 	}
 
@@ -98,8 +92,8 @@ func TestParseEmailNegative(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			email, err := objectvalues.ParseEmail(tc.input)
 
-			assert.ErrorIs(t, err, tc.expectedErr, tc.key)
-			assert.Equal(t, tc.expected, email, tc.key)
+			assert.ErrorIs(t, err, objectvalues.ErrNotValidEmail, tc.key)
+			assert.Equal(t, objectvalues.Email(""), email, tc.key)
 		})
 	}
 }
@@ -134,22 +128,16 @@ func TestParseWebsitePositive(t *testing.T) {
 
 func TestParseWebsiteNegative(t *testing.T) {
 	tcs := []struct {
-		key         string
-		input       string
-		expected    objectvalues.Website
-		expectedErr error
+		key   string
+		input string
 	}{
 		{
-			key:         "Case 1",
-			input:       "ftp://spam.eggs",
-			expected:    "",
-			expectedErr: objectvalues.ErrNotValidWebsite,
+			key:   "Case 1",
+			input: "ftp://spam.eggs",
 		},
 		{
-			key:         "Case 2",
-			input:       "www.facebook.com/ImagineDragons",
-			expected:    "",
-			expectedErr: objectvalues.ErrNotValidWebsite,
+			key:   "Case 2",
+			input: "www.facebook.com/ImagineDragons",
 		},
 	}
 
@@ -157,8 +145,8 @@ func TestParseWebsiteNegative(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			website, err := objectvalues.ParseWebsite(tc.input)
 
-			assert.ErrorIs(t, err, tc.expectedErr, tc.key)
-			assert.Equal(t, tc.expected, website, tc.key)
+			assert.ErrorIs(t, err, objectvalues.ErrNotValidWebsite, tc.key)
+			assert.Equal(t, objectvalues.Website(""), website, tc.key)
 		})
 	}
 }
@@ -193,24 +181,24 @@ func TestParseArtistNamePositive(t *testing.T) {
 
 func TestParseArtistNameNegative(t *testing.T) {
 	tcs := []struct {
-		key      string
-		input    string
-		expected objectvalues.ArtistName
+		key   string
+		input string
 	}{
 		{
-			key:      "Case 1",
-			input:    "Spam1 eggs",
-			expected: "",
+			key:   "Case 1",
+			input: "Spam1 eggs",
 		},
 		{
-			key:      "Case 2",
-			input:    "Imagine&Dragons",
-			expected: "",
+			key:   "Case 2",
+			input: "Imagine&Dragons",
 		},
 		{
-			key:      "Case 3",
-			input:    strings.Repeat("A", 256),
-			expected: "",
+			key:   "Case 3",
+			input: strings.Repeat("A", 256),
+		},
+		{
+			key:   "Case 4",
+			input: "",
 		},
 	}
 
@@ -219,7 +207,7 @@ func TestParseArtistNameNegative(t *testing.T) {
 			name, err := objectvalues.ParseArtistName(tc.input)
 
 			assert.ErrorIs(t, err, objectvalues.ErrNotValidArtistName, tc.key)
-			assert.Equal(t, tc.expected, name, tc.key)
+			assert.Equal(t, objectvalues.ArtistName(""), name, tc.key)
 		})
 	}
 }
@@ -254,16 +242,16 @@ func TestParseArtistDescriptionPositive(t *testing.T) {
 
 func TestParseArtistDescriptionNegative(t *testing.T) {
 	tcs := []struct {
-		key         string
-		input       string
-		expected    objectvalues.ArtistDescription
-		expectedErr error
+		key   string
+		input string
 	}{
 		{
-			key:         "Case 1",
-			input:       strings.Repeat("A", 256),
-			expected:    "",
-			expectedErr: objectvalues.ErrNotValidArtistDescription,
+			key:   "Case 1",
+			input: strings.Repeat("A", 256),
+		},
+		{
+			key:   "Case 2",
+			input: strings.Repeat("A", 11),
 		},
 	}
 
@@ -271,8 +259,8 @@ func TestParseArtistDescriptionNegative(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			desc, err := objectvalues.ParseArtistDescription(tc.input)
 
-			assert.ErrorIs(t, err, tc.expectedErr, tc.key)
-			assert.Equal(t, tc.expected, desc, tc.key)
+			assert.ErrorIs(t, err, objectvalues.ErrNotValidArtistDescription, tc.key)
+			assert.Equal(t, objectvalues.ArtistDescription(""), desc, tc.key)
 		})
 	}
 }

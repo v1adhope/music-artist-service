@@ -118,7 +118,7 @@ func GetExistingArtists() []entities.Artist {
 	artistNF.SetDescription("Raps with raw grit and emotional authenticity")
 	artistNF.SetWebsite("https://facebook.com/nfrealmusci")
 	artistNF.SetMounthlyListeners(13899500)
-	artistNF.SetEmaiil("nf@example.com")
+	artistNF.SetEmail("nf@example.com")
 	artistNF.SetStatus(13899500)
 
 	artists = append(artists, artistNF)
@@ -129,7 +129,7 @@ func GetExistingArtists() []entities.Artist {
 	artistEminem.SetDescription("One of the greatest rappers of his generation")
 	artistEminem.SetWebsite("https://facebook.com/Eminem")
 	artistEminem.SetMounthlyListeners(83563706)
-	artistEminem.SetEmaiil("eminem@fhcustomercare.com")
+	artistEminem.SetEmail("eminem@fhcustomercare.com")
 	artistEminem.SetStatus(83563706)
 
 	artists = append(artists, artistEminem)
@@ -140,7 +140,7 @@ func GetExistingArtists() []entities.Artist {
 	artistAltJ.SetDescription("The dream was recorder from August 2020 until June 2021")
 	artistAltJ.SetWebsite("https://facebook.com/altJ.band")
 	artistAltJ.SetMounthlyListeners(9518740)
-	artistAltJ.SetEmaiil("altj@example.com")
+	artistAltJ.SetEmail("altj@example.com")
 	artistAltJ.SetStatus(9518740)
 
 	artists = append(artists, artistAltJ)
@@ -154,7 +154,7 @@ func GetNotExistingArtist() entities.Artist {
 	artist.SetDescription("God's favorite band")
 	artist.SetWebsite("https://facebook.com/greenday")
 	artist.SetMounthlyListeners(33332230)
-	artist.SetEmaiil("info@crushmusic.com")
+	artist.SetEmail("info@crushmusic.com")
 	artist.SetStatus(33332230)
 
 	return artist

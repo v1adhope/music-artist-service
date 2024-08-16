@@ -4,7 +4,6 @@ import (
 	"github.com/v1adhope/music-artist-service/internal/objectvalues"
 )
 
-// INFO: mounthlyListeners is concept with cron and cache
 type Artist struct {
 	id                string
 	name              objectvalues.ArtistName
@@ -57,7 +56,7 @@ func (e *Artist) SetMounthlyListeners(target uint64) {
 	e.mounthlyListeners = target
 }
 
-func (e *Artist) SetEmaiil(target string) error {
+func (e *Artist) SetEmail(target string) error {
 	var err error
 
 	e.email, err = objectvalues.ParseEmail(target)

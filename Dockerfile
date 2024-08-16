@@ -4,10 +4,11 @@ label org.opencontainers.image.authors="Vladislav Gardner <vladislavgardner@gmai
 workdir /app
 
 copy go.mod go.sum .env ./
-run mkdir -p cmd internal pkg
+run mkdir -p cmd internal pkg certs
 copy cmd/ ./cmd
 copy internal ./internal
 copy pkg ./pkg
+copy certs ./certs
 
 run go mod download
 run go mod verify
@@ -21,6 +22,9 @@ workdir /service
 
 copy --from=build ./app/app .
 copy --from=build ./app/.env .
+
+run mkdir certs
+copy --from=build ./app/certs ./certs
 
 # TODO: fix nobody
 user 1000:1000

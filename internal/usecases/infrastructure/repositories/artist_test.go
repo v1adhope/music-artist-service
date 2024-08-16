@@ -1,5 +1,5 @@
 // INFO: tests not isolated and weak (focus for testing through containers)
-package repository_test
+package repositories_test
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"github.com/v1adhope/music-artist-service/internal/entities"
 	"github.com/v1adhope/music-artist-service/internal/testhelpers"
-	"github.com/v1adhope/music-artist-service/internal/usecases/infrastructure/repository"
+	"github.com/v1adhope/music-artist-service/internal/usecases/infrastructure/repositories"
 	"github.com/v1adhope/music-artist-service/internal/usecases/infrastructure/validation"
 	"github.com/v1adhope/music-artist-service/pkg/postgresql"
 )
@@ -18,7 +18,7 @@ import (
 type ArtistSuite struct {
 	suite.Suite
 	pgContainer *testhelpers.PostgresContainer
-	repo        repository.ArtistReposer
+	repo        repositories.ArtistReposer
 	validator   validation.Validater
 	ctx         context.Context
 }
@@ -48,7 +48,7 @@ func (suite *ArtistSuite) SetupSuite() {
 		log.Fatal(err)
 	}
 
-	suite.repo = repository.NewArtist(driver)
+	suite.repo = repositories.NewArtist(driver)
 
 	suite.validator = validation.New()
 }
@@ -107,12 +107,12 @@ func (suite *ArtistSuite) Test2Get() {
 			artist, err := suite.repo.Get(suite.ctx, id)
 
 			assert.NoError(t, err, tc.key)
-			assert.Equal(t, artist.GetName(), tc.expected.GetName(), tc.key)
-			assert.Equal(t, artist.GetDescription(), tc.expected.GetDescription(), tc.key)
-			assert.Equal(t, artist.GetWebsite(), tc.expected.GetWebsite(), tc.key)
-			assert.Equal(t, artist.GetMounthlyListeners(), tc.expected.GetMounthlyListeners(), tc.key)
-			assert.Equal(t, artist.GetEmail(), tc.expected.GetEmail(), tc.key)
-			assert.Equal(t, artist.GetStatus(), tc.expected.GetStatus(), tc.key)
+			assert.Equal(t, tc.expected.GetName(), artist.GetName(), tc.key)
+			assert.Equal(t, tc.expected.GetDescription(), artist.GetDescription(), tc.key)
+			assert.Equal(t, tc.expected.GetWebsite(), artist.GetWebsite(), tc.key)
+			assert.Equal(t, tc.expected.GetMounthlyListeners(), artist.GetMounthlyListeners(), tc.key)
+			assert.Equal(t, tc.expected.GetEmail(), artist.GetEmail(), tc.key)
+			assert.Equal(t, tc.expected.GetStatus(), artist.GetStatus(), tc.key)
 		})
 	}
 }
@@ -136,12 +136,13 @@ func (suite *ArtistSuite) Test1GetAll() {
 
 			assert.NoError(t, err, tc.key)
 			for i, artist := range artists {
-				assert.Equal(t, artist.GetName(), tc.expected[i].GetName(), tc.key)
-				assert.Equal(t, artist.GetDescription(), tc.expected[i].GetDescription(), tc.key)
-				assert.Equal(t, artist.GetWebsite(), tc.expected[i].GetWebsite(), tc.key)
-				assert.Equal(t, artist.GetMounthlyListeners(), tc.expected[i].GetMounthlyListeners(), tc.key)
-				assert.Equal(t, artist.GetEmail(), tc.expected[i].GetEmail(), tc.key)
-				assert.Equal(t, artist.GetStatus(), tc.expected[i].GetStatus(), tc.key)
+				assert.Equal(t, tc.expected[i].GetId(), artist.GetId(), tc.key)
+				assert.Equal(t, tc.expected[i].GetName(), artist.GetName(), tc.key)
+				assert.Equal(t, tc.expected[i].GetDescription(), artist.GetDescription(), tc.key)
+				assert.Equal(t, tc.expected[i].GetWebsite(), artist.GetWebsite(), tc.key)
+				assert.Equal(t, tc.expected[i].GetMounthlyListeners(), artist.GetMounthlyListeners(), tc.key)
+				assert.Equal(t, tc.expected[i].GetEmail(), artist.GetEmail(), tc.key)
+				assert.Equal(t, tc.expected[i].GetStatus(), artist.GetStatus(), tc.key)
 			}
 		})
 	}
@@ -181,7 +182,7 @@ func (suite *ArtistSuite) Test3Replace() {
 	artistNF.SetDescription("There is new desc")
 	artistNF.SetWebsite("https://facebook.com/nfrealmusci")
 	artistNF.SetMounthlyListeners(13899500)
-	artistNF.SetEmaiil("nf@example.com")
+	artistNF.SetEmail("nf@example.com")
 
 	tcs := []struct {
 		key   string

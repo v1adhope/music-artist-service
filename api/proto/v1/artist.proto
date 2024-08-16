@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package artist;
+
+option go_package = "github.com/v1adhope/music-artist-service/pkg/api/proto/v1/artist;artistv1";
+
+service Artist {
+  rpc Get(GetArtistReq) returns (GetArtistReply);
+  rpc GetAll(google.protobuf.Empty) returns (GetAllArtistReply);
+  rpc Create(CreateArtistReq) returns (CreateArtistReply);
+  rpc Replace(ReplaceArtistReq) returns (google.protobuf.Empty);
+  rpc Delete(DeleteArtistReq) returns (google.protobuf.Empty);
+}
+
+message ArtistType {
+  optional string id = 1;
+  string name = 2;
+  string description = 3;
+  string website = 4;
+  uint64 mounthly_listeners = 5;
+  string email = 6;
+  optional string status = 7;
+}
+
+message ArtistIdType {
+  string id = 1;
+}
+
+message GetArtistReq {
+  ArtistIdType data = 1;
+}
+
+message GetArtistReply {
+  ArtistType data = 1;
+}
+
+message GetAllArtistReply {
+  repeated ArtistType data = 1;
+}
+
+message CreateArtistReq {
+  ArtistType data = 1;
+}
+
+message CreateArtistReply {
+  ArtistIdType data = 1;
+}
+
+message ReplaceArtistReq {
+  ArtistType data = 1;
+}
+
+message DeleteArtistReq {
+  ArtistIdType data = 1;
+}
